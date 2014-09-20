@@ -44,17 +44,17 @@
         socket.emit('turn', {move: move, from: from, to: to});
       }
 
-      var start = function(isFirstPlayer) {
+      socket.on('startGame', function(isFirstPlayer) {
         // Either play first move or wait
         if (isFirstPlayer) {
           
         }
-      }
+      });
 
-      var end = function() {
+      socket.on('endGame', function() {
         // Game is over
         socket.disconnect();
-      }
+      });
     </script>
   </head>
   <body style="background-color:black;">
