@@ -6,6 +6,23 @@
     <script src="http://js.leapmotion.com/leap-0.6.0.js"></script>
     <script src="http://js.leapmotion.com/leap-plugins-0.1.6.js"></script>
     <script src="http://js.leapmotion.com/leap.rigged-hand-0.1.5.min.js"></script>
+  </head>
+  <body style="background-color:black;">
+    <div style="color: white;">
+      <span>Enemy left: </span><span id='eleftScore'>1</span>&nbsp;
+      <span>Enemy right: </span><span id='erightScore'>1</span>&nbsp;
+      <div style="float: right;">
+        <span>My left: </span><span id='leftScore'>1</span>&nbsp;
+        <span>My right: </span><span id='rightScore'>1</span>&nbsp;
+      </div>
+    </div>
+    <script>
+    (window.controller = new Leap.Controller)
+      .use('handHold', {})
+      .use('handEntry', {})
+      .use('riggedHand',{scale: .5, positionScale: .5})
+      .connect()
+    </script>
     <script>
       var socket = io();
       var myFingers = [1, 1];
@@ -46,6 +63,10 @@
           document.getElementById('rightScore').innerHtml = myFingers[1];
         }
         socket.emit('turn', {move: move, from: from, to: to});
+        if (otherFingers[0] === otherFingers[1] === 0) {
+          alert('You win!!!');
+          socket.disconnect();
+        }
       }
 
       socket.on('startGame', function(isFirstPlayer) {
@@ -59,23 +80,6 @@
         // Game is over
         socket.disconnect();
       });
-    </script>
-  </head>
-  <body style="background-color:black;">
-    <div style="color: white;">
-      <span>Enemy left: </span><span id='eleftScore'>1</span>&nbsp;
-      <span>Enemy right: </span><span id='erightScore'>1</span>&nbsp;
-      <div style="float: right;">
-        <span>My left: </span><span id='leftScore'>1</span>&nbsp;
-        <span>My right: </span><span id='rightScore'>1</span>&nbsp;
-      </div>
-    </div>
-    <script>
-    (window.controller = new Leap.Controller)
-      .use('handHold', {})
-      .use('handEntry', {})
-      .use('riggedHand',{scale: .5, positionScale: .5})
-      .connect()
     </script>
   </body>
 </html>
