@@ -13,6 +13,15 @@
         // Code goes here
         socket.emit('turn', data);
       }
+
+      var start = function(isFirstPlayer) {
+        // Either play first move or wait
+      }
+
+      var end = function() {
+        // Game is over
+        socket.disconnect();
+      }
     </script>
   </head>
   <body></body>
