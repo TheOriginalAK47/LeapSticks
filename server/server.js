@@ -44,7 +44,11 @@ io.on('connection', function(socket){
     //  to: ""
     // }
     socket.on('turn', function(data) {
-      // Find that socket's pair
+      // Swap left and right to simplify score keeping on the clients
+      var temp = data.from;
+      data.from = data.to;
+      data.to = temp;
+      // Find that socket's pair and update it
       for (i = 0; i < pairedClients.length; ++i) {
         if (pairedClients[i][0] === socket || pairedClients[i][1] === socket) {
           if (pairedClients[i][0] === socket) {

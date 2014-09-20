@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io.connect('http://127.0.0.1:3000');
+      var myFingers = [1, 1];
+      var otherFingers = [1, 1];
+
+      socket.on('update', function(data) {
+        console.log('received update'); // Temporary
+        if (data.move === 'split') {
+          // Update values
+          if (data.from === 'left') {
+            --otherFingers[0];
+            ++otherFingers[1];
+          } else {
+            --otherFingers[1];
+            ++otherFingers[0];
+          }
+        } else if (data.move === 'attack') {
+          // Update values
+          myFingers[data.to === 'left' ? 0 : 1] +=
+              otherFingers[data.to === 'left' ? 0 : 1];
+          myFingers[data.to === 'left' ? 0 : 1] %= 5;
+          if (myFingers[0] === 0 && myFingers[1] === 0) {
+            socket.disconnect();
+          } else if (myFingers[0] === 0 && myFingers[1] > 1) {
+            ++myFingers[0];
+            --myFingers[1];
+            turn('split', 'left', 'right');
+          } else if (myFingers[0] > 1 && myFingers[1] === 0) {
+            ++myFingers[1];
+            --myFingers[0];
+            turn('split', 'right', 'left');
+          } else if (myFingers[0] + otherFingers[0] === 5) {
+            turn('attack', 'left', 'left');
+          } else if (myFingers[0] + otherFingers[1] === 5) {
+            turn('attack', 'left', 'right');
+          } else if (myFingers[1] + otherFingers[0] === 5) {
+            turn('attack', 'right', 'left'); 
+          } else if (myFingers[1] + otherFingers[1] === 5) {
+            turn('attack', 'right', 'right');
+          } else {
+            var randHand1 = Math.floor(Math.random() * 2);
+            var randHand2 = Math.floor(Math.random() * 2);
+            turn('attack', randHand1 === 0 ? 'left' : 'right', 
+                randHand2 === 0 ? 'left' : 'right');
+          }
+        }
+      });
+
+      var turn = function(move, from, to) {
+        var data = {
+          move: move,
+          from: from,
+          to: to
+        }
+        socket.emit('turn', data);
+      }
+
+      var start = function(isFirstPlayer) {
+        if (isFirstPlayer) {
+          turn('attack', left, right);
+        }
+      }
+
+      var end = function() {
+        // Game is over
+        socket.disconnect();
+      }
+    </script>
+  </head>
+  <body>
+  <img src="http://i.kinja-img.com/gawker-media/image/upload/s--SS93Qb_u--/c_fit,fl_progressive,q_80,w_636/pphhopbpo9ldb5sq8oqf.jpg"/>
+  </body>
+</html>
