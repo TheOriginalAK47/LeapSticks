@@ -6,22 +6,26 @@ var closeEnough = 150;
 var fastEnough = 200;
 var leftHandFingers = 1;
 var rightHandFingers = 1;
-var controller = new leap.Controller(({enableGestures:true}));
-leap.loop(function(frame) {
-    var json = turnHandler(frame); 
-    //console.log(json);
-    frame = controller.frame(); 
-});
-
-function turnHandler(frame) {
-    if (frame.timestamp < closeTime + 1000000)
-        return {
+function main() {
+    var controller = new leap.Controller(({enableGestures:true}));
+    leap.loop(function(frame) {
+        var json = turnHandler(frame); 
+        frame = controller.frame();
+        if (frame.timestamp < closeTime + 3000000)
+            return {
                     "data": {
                                 "move": "",
                                 "from": "",
                                 "to": ""
                             }
-                };
+                    };
+        if (json.data["move"] !== '' && json.data["from"] !== "" && json.data["to"] !== "") {
+            return json;
+        }
+    });
+}
+
+function turnHandler(frame) {
     var turnJSON = splitHappened(frame);
     //console.log(turnJSON);
     var splitOccurred = (turnJSON.data["move"] === "split") ? true : false;
@@ -31,10 +35,9 @@ function turnHandler(frame) {
         return turnJSON;
     }
     turnJSON = attackOccurred(frame);
-    var attacked = (turnJSON["move"] === "attack") ? true : false;
+    var attacked = (turnJSON.data["move"] === "attack") ? true : false;
     if (attacked == true) {
         console.log(turnJSON);
-        //console.log("Attack!");
         return turnJSON;
     }
     return {
@@ -68,24 +71,26 @@ function handAttackedData(frame) {
         //console.log(hand1Vel[2]);
         //console.log(hand2Vel[2]);
         if (math.abs(hand1Vel[2]) > fastEnough) {
+            closeTime = frame.timeStamp;
             turnJSON.data["move"] =  "attack";
             turnJSON.data["from"] = hand1.type;
-            var dir = hand1.direction[0];
-            if (dir > 500) 
+            var xVel = hand1.palmVelocity[0];
+            if (xVel > 350) 
                 turnJSON.data["to"] = "right";
             else
                 turnJSON.data["to"] = "left";
         } else if (math.abs(hand2Vel[2]) > fastEnough) {
+            closeTime = frame.timeStamp;
             turnJSON.data["move"] = "attack";
             turnJSON.data["from"] = hand2.type;
-            var dir = hand2.direction[0];
-            if (dir > 500) 
+            var xVel = hand2.palmVelocity[0];
+            if (xVel > 350) 
                 turnJSON.data["to"] = "right";
             else
                 turnJSON.data["to"] = "left";
         }
     }
-    console.log(turnJSON);
+    //console.log(turnJSON);
     return turnJSON;
 }
 
