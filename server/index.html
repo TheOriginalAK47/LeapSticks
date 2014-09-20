@@ -20,6 +20,10 @@
           myFingers[data.to === 'left' ? 0 : 1] %= 5;
           document.getElementById('leftScore').innerHtml = myFingers[0];
           document.getElementById('rightScore').innerHtml = myFingers[1];
+          if (myFingers[0] === 0 && myFingers[1] === 0) {
+            alert('You lose!!!!');
+            socket.disconnect();
+          }
         } else if (data.move === 'split') {
           ++otherFingers[data.to === 'left' ? 0 : 1];
           --otherFingers[data.from === 'left' ? 0 : 1];
