@@ -16,8 +16,8 @@ io.on('connection', function(socket){
     console.log('a user has connected');
     if (clients.length === 2) {
       var randomClient = Math.floor(Math.random() * 2);
-      clients[randomClient].emit('startGame', true);
-      clients[randomClient || 0].emit('startGame', false);
+      clients[0].emit('startGame', true);
+      clients[1].emit('startGame', false);
       pairedClients.push([clients[0], clients[1]]);
       clients = [];
       console.log('two players are now connected, game starting');

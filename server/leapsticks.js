@@ -4,22 +4,23 @@ var fastEnough = 200;
 var leftHandFingers = 1;
 var rightHandFingers = 1;
 function main(controller) {
-    Leap.loop(function(frame) {
-        var json = turnHandler(frame); 
-        frame = controller.frame();
-        if (frame.timestamp < closeTime + 1000000)
-            //continue;
-            return {
-                    "data": {
-                                "move": "",
-                                "from": "",
-                                "to": ""
-                            }
-                    };
-        if (json.data["move"] !== '' && json.data["from"] !== "" && json.data["to"] !== "") {
-            return json;
-        }
-    });
+    var json;
+    var time;
+    while (json === undefined) {
+        sleep.sleep(0.1);
+        time = frame.timestamp + 1000;
+        Leap.loop(function(frame) {
+            if (frame.timestamp > time) {
+                var json = turnHandler(frame); 
+            //if (json !== "" && json.data !== "" && json.data["move"] !== "" && json.data["from"] !== "" && json.data["to"] !== "") {
+            //console.log("Main json: " + json)
+                //return json;
+            frame = controller.frame();
+            }
+        });
+        
+    }
+    return json;
 }
 
 function turnHandler(frame) {
@@ -28,14 +29,14 @@ function turnHandler(frame) {
     var splitOccurred = (turnJSON.data["move"] === "split") ? true : false;
     // console.log(splitOccurred);
     if (splitOccurred == true) {
-        console.log(turnJSON);
+        //console.log(turnJSON);
         //alert("Split happened!");
         return turnJSON;
     }
     turnJSON = attackOccurred(frame);
     var attacked = (turnJSON.data["move"] === "attack") ? true : false;
     if (attacked == true) {
-        console.log(turnJSON);
+        //console.log(turnJSON);
         //alert("Attack happened!");
         return turnJSON;
     }
@@ -152,6 +153,12 @@ function handsTouchingData(frame) {
         }
     }
     return turnJSON;
+}
+
+function sleep(millis, callback) {
+    setTimeout(function()
+            { callback(); }
+    , millis);
 }
 
 function calcDistance(vectorOne, vectorTwo) {
