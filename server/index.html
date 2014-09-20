@@ -6,6 +6,23 @@
     <script src="http://js.leapmotion.com/leap-0.6.0.js"></script>
     <script src="http://js.leapmotion.com/leap-plugins-0.1.6.js"></script>
     <script src="http://js.leapmotion.com/leap.rigged-hand-0.1.5.min.js"></script>
+  </head>
+  <body style="background-color:black;">
+    <div style="color: white;">
+      <span>Enemy left: </span><span id='eleftScore'>1</span>&nbsp;
+      <span>Enemy right: </span><span id='erightScore'>1</span>&nbsp;
+      <div style="float: right;">
+        <span>My left: </span><span id='leftScore'>1</span>&nbsp;
+        <span>My right: </span><span id='rightScore'>1</span>&nbsp;
+      </div>
+    </div>
+    <script>
+    (window.controller = new Leap.Controller)
+      .use('handHold', {})
+      .use('handEntry', {})
+      .use('riggedHand',{scale: .5, positionScale: .5})
+      .connect()
+    </script>
     <script>
       var socket = io();
       var myFingers = [1, 1];
@@ -20,6 +37,10 @@
           myFingers[data.to === 'left' ? 0 : 1] %= 5;
           document.getElementById('leftScore').innerHtml = myFingers[0];
           document.getElementById('rightScore').innerHtml = myFingers[1];
+          if (myFingers[0] === 0 && myFingers[1] === 0) {
+            alert('You lose!!!!');
+            socket.disconnect();
+          }
         } else if (data.move === 'split') {
           ++otherFingers[data.to === 'left' ? 0 : 1];
           --otherFingers[data.from === 'left' ? 0 : 1];
@@ -42,36 +63,23 @@
           document.getElementById('rightScore').innerHtml = myFingers[1];
         }
         socket.emit('turn', {move: move, from: from, to: to});
+        if (otherFingers[0] === otherFingers[1] === 0) {
+          alert('You win!!!');
+          socket.disconnect();
+        }
       }
 
-      var start = function(isFirstPlayer) {
+      socket.on('startGame', function(isFirstPlayer) {
         // Either play first move or wait
         if (isFirstPlayer) {
           
         }
-      }
+      });
 
-      var end = function() {
+      socket.on('endGame', function() {
         // Game is over
         socket.disconnect();
-      }
-    </script>
-  </head>
-  <body style="background-color:black;">
-    <div style="color: white;">
-      <span>Enemy left: </span><span id='eleftScore'>1</span>&nbsp;
-      <span>Enemy right: </span><span id='erightScore'>1</span>&nbsp;
-      <div style="float: right;">
-        <span>My left: </span><span id='leftScore'>1</span>&nbsp;
-        <span>My right: </span><span id='rightScore'>1</span>&nbsp;
-      </div>
-    </div>
-    <script>
-    (window.controller = new Leap.Controller)
-      .use('handHold', {})
-      .use('handEntry', {})
-      .use('riggedHand',{scale: .5, positionScale: .5})
-      .connect()
+      });
     </script>
   </body>
 </html>
