@@ -24,9 +24,9 @@ io.on('connection', function(socket){
       connectedPlayers = connectedPlayers - 1;
 
       // Delete socket from clients[]
-      var i = array.indexOf(socket);
+      var i = clients.indexOf(socket);
       if(i != -1) {
-          array.splice(i, 1);
+          clients.splice(i, 1);
       }
 
       socket.broadcast.emit('endGame', '');
