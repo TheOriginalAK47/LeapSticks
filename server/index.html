@@ -2,6 +2,11 @@
 <html>
   <head>
     <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.min.js"></script>
+ 
+    <script src="http://js.leapmotion.com/leap-0.6.0.js"></script>
+    <script src="http://js.leapmotion.com/leap-plugins-0.1.6.js"></script>
+    <script src="http://js.leapmotion.com/leap.rigged-hand-0.1.5.min.js"></script>
     <script>
       var socket = io();
 
@@ -24,5 +29,13 @@
       }
     </script>
   </head>
-  <body></body>
+  <body>
+    <script>
+    (window.controller = new Leap.Controller)
+      .use('handHold', {})
+      .use('handEntry', {})
+      .use('riggedHand',{scale: .5, positionScale: .5})
+      .connect()
+    </script>
+  </body>
 </html>
