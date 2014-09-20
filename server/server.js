@@ -2,48 +2,62 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var clients = [];
-var connectedPlayers = 0;
+var pairedClients = [];
 
 app.get('/', function(req, res){
     res.sendfile('index.html');
 });
 
 io.on('connection', function(socket){
-    connectedPlayers = connectedPlayers + 1;
     clients.push(socket);
     console.log('a user has connected');
-    if (connectedPlayers === 2) {
-      var randomClient = Math.floor(Math.random() * connectedPlayers);
+    if (clients.length === 2) {
+      var randomClient = Math.floor(Math.random() * 2);
       // startGame === true -> first player
       clients[randomClient].emit('startGame', true);
       clients[randomClient === 0 ? 1 : 0].emit('startGame', false);
+      pairedClients.push([clients[0], clients[1]]);
+      clients = clients.slice(2, clients.length);
       console.log('two players are now connected, game starting');
     }
 
     socket.on('disconnect', function() {
-      connectedPlayers = connectedPlayers - 1;
-
-      // Delete socket from clients[]
-      var i = clients.indexOf(socket);
-      if(i != -1) {
-          clients.splice(i, 1);
+      // Find pair of clients to disconnect
+      for (i = 0; i < pairedClients.length; ++i) {
+        if (pairedClients[i][0] === socket || pairedClients[i][1] === socket) {
+          if (pairedClients[i][0] === socket) {
+            pairedClients[i][1].emit('endGame', '');
+          } else {
+            pairedClients[i][0].emit('endGame', '');
+          }
+          pairedClients = pairedClients.splice(i, 1);
+          break;
+        }
       }
-
-      socket.broadcast.emit('endGame', '');
-      console.log('a user has disconnected');
+      console.log('a user has disconnected, game is over');
     });
 
-    // Turn is either an attack or split. 
+    // Turn is either an attack or split.
     // data = {
     //  move: "",
     //  from: "",
     //  to: ""
     // }
     socket.on('turn', function(data) {
-      socket.brodcast.emit('update', data); 
+      // Find that socket's pair
+      for (i = 0; i < pairedClients.length; ++i) {
+        if (pairedClients[i][0] === socket || pairedClients[i][1] === socket) {
+          if (pairedClients[i][0] === socket) {
+            pairedClients[i][1].emit('update', data);
+          } else {
+            pairedClients[i][0].emit('update', data);
+          }
+          break;
+        }
+      }
     });
 });
 
 http.listen(3000, function(){
-    console.log('listening on *:3000');
+    console.log('listening on port 3000');
 });
