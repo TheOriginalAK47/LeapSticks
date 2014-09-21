@@ -33,24 +33,25 @@
             ++myFingers[1];
             --myFingers[0];
             turn('split', 'left', 'right');
-          } else if (myFingers[0] > 1 && myFingers[1] === 0) {
-            ++myFingers[1];
-            --myFingers[0];
-            turn('split', 'right', 'left');
           } else if (myFingers[0] + otherFingers[0] === 5) {
             turn('attack', 'left', 'left');
           } else if (myFingers[0] + otherFingers[1] === 5) {
             turn('attack', 'left', 'right');
           } else if (myFingers[1] + otherFingers[0] === 5) {
-            turn('attack', 'right', 'left'); 
+            turn('attack', 'right', 'left');
           } else if (myFingers[1] + otherFingers[1] === 5) {
             turn('attack', 'right', 'right');
           } else {
             var randHand1 = Math.floor(Math.random() * 2);
             var randHand2 = Math.floor(Math.random() * 2);
-            turn('attack', randHand1 === 0 ? 'left' : 'right', 
+            turn('attack', randHand1 === 0 ? 'left' : 'right',
                 randHand2 === 0 ? 'left' : 'right');
           }
+        } else {
+          var randHand1 = Math.floor(Math.random() * 2);
+          var randHand2 = Math.floor(Math.random() * 2);
+          turn('attack', randHand1 === 0 ? 'left' : 'right',
+              randHand2 === 0 ? 'left' : 'right');
         }
       });
 
@@ -60,19 +61,32 @@
           from: from,
           to: to
         }
+        if (move === 'attack') {
+            otherFingers[to === 'left' ? 0 : 1] += myFingers[from === 'left' ? 0 : 1];
+            otherFingers[to === 'left' ? 0 : 1] %= 5;
+        }
         socket.emit('turn', data);
       }
 
-      var start = function(isFirstPlayer) {
+      socket.on('startGame', function(isFirstPlayer) {
+        myFingers[0] = 1;
+        myFingers[1] = 1;
+        otherFingers[0] = 1;
+        otherFingers[1] = 1;
         if (isFirstPlayer) {
-          turn('attack', left, right);
+          turn('attack', 'left', 'right');
         }
-      }
+      });
 
-      var end = function() {
+      socket.on('endGame', function(didWin) {
         // Game is over
+        if (didWin) {
+          var play = Audio("http://f.samwep.in:82/files/ds101/50415/robot%20laugh(samwep.in).mp3");
+          play.play();
+          alert("Better luck next time human!");
+        }
         socket.disconnect();
-      }
+      });
     </script>
   </head>
   <body>
