@@ -21,7 +21,7 @@
         } else if (data.move === 'attack') {
           // Update values
           myFingers[data.to === 'left' ? 0 : 1] +=
-              otherFingers[data.to === 'left' ? 0 : 1];
+              otherFingers[data.from === 'left' ? 0 : 1];
           myFingers[data.to === 'left' ? 0 : 1] %= 5;
           if (myFingers[0] === 0 && myFingers[1] === 0) {
             alert("YOU LOST");
