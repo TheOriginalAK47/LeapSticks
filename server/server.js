@@ -11,6 +11,10 @@ app.get('/', function(req, res){
 app.get('/leapsticks.js', function(req, res){
     res.sendfile('leapsticks.js');
 });
+
+app.get('/ai', function(req, res) {
+    res.sendfile('ai/index.html');
+});
 io.on('connection', function(socket){
     clients.push(socket);
     console.log('a user has connected');

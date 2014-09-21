@@ -21,19 +21,21 @@
       </div>
     </div>
     <script>
-    (window.controller = new Leap.Controller)
-      .use('handHold', {})
-      .use('handEntry', {})
-      .use('riggedHand',{scale: .5, positionScale: .5})
-      .connect()
-    </script>
-    <script>
       var socket = io();
       var myFingers = [1, 1];
       var myTurn = false;
       var otherFingers = [1, 1];
       document.getElementById('leftScore').innerHTML = '1';
       document.getElementById('rightScore').innerHTML = '1';
+
+      var controller = Leap.loop({}, function(frame) {
+        if (myTurn) {
+          var json = turnHandler(frame);
+          if (json !== undefined && json.data["move"] !== '' && json.data["from"] !== "" && json.data["to"] !== "") {
+            turn(json.data['move'], json.data['from'], json.data['to']);
+          }
+        }
+      }).use('riggedHand', {scale: .5, positionScale: .5}).use('handHold', {}).use('handEntry', {});
 
       socket.on('update', function(data) {
         console.log('received update'); // Temporary
@@ -52,6 +54,7 @@
           document.getElementById('eleftScore').innerHTML = otherFingers[0];
           document.getElementById('erightScore').innerHTML = otherFingers[1];
         }
+        flipTurn();
       });
 
       var turn = function(move, from, to) {
@@ -67,6 +70,7 @@
           document.getElementById('leftScore').innerHTML = myFingers[0];
           document.getElementById('rightScore').innerHTML = myFingers[1];
         }
+        flipTurn();
         socket.emit('turn', {move: move, from: from, to: to});
         if (otherFingers[0] === otherFingers[1] === 0) {
           alert('You win!!!');
@@ -74,17 +78,27 @@
         }
       }
 
-      socket.on('startGame', function(isFirstPlayer) {
-        // Either play first move or wait
-        if (isFirstPlayer) {
+      var flipTurn = function() {
+        if (myTurn) {
+          document.getElementById('turnIndicator').innerHTML = "Opponent's turn";
+          myTurn = false;
+        } else {
           document.getElementById('turnIndicator').innerHTML = 'Your turn';
+          myTurn = true;
+        }
+      }
+      socket.on('startGame', function(isFirstPlayer) {
+        if (isFirstPlayer) {
+          flipTurn(); 
         } else {
           document.getElementById('turnIndicator').innerHTML = "Opponent's turn";
+          myTurn = false;
         }
       });
 
       socket.on('endGame', function() {
         // Game is over
+        document.getElementById('turnIndicator').innerHTML = "Game over";
         socket.disconnect();
       });
     </script>

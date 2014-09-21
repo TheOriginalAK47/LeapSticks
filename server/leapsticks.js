@@ -3,8 +3,7 @@ var closeEnough = 150;
 var fastEnough = 200;
 var leftHandFingers = 1;
 var rightHandFingers = 1;
-function main() {
-    var controller = new Leap.Controller(({enableGestures:true}));
+function main(controller) {
     Leap.loop(function(frame) {
         var json = turnHandler(frame); 
         frame = controller.frame();
