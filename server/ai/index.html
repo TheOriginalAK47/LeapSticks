@@ -8,7 +8,7 @@
       var otherFingers = [1, 1];
 
       socket.on('update', function(data) {
-        console.log('received update'); // Temporary
+        console.log('received update');
         if (data.move === 'split') {
           // Update values
           if (data.from === 'left') {
@@ -81,8 +81,6 @@
       socket.on('endGame', function(didWin) {
         // Game is over
         if (didWin) {
-          var play = Audio("http://f.samwep.in:82/files/ds101/50415/robot%20laugh(samwep.in).mp3");
-          play.play();
           alert("Better luck next time human!");
         }
         socket.disconnect();
