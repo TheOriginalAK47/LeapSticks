@@ -48,6 +48,7 @@
           document.getElementById('rightScore').innerHTML = myFingers[1];
           if (myFingers[0] === 0 && myFingers[1] === 0) {
             alert('You lose!!!!');
+            socket.emit('endGame', true);
             socket.disconnect();
           }
         } else if (data.move === 'split') {
@@ -69,7 +70,7 @@
 
       var flashScreen = function() {
         makeRed();
-        // setTimeout(makeBlack(), 20000);
+        setTimeout(makeBlack(), 20000);
       }
 
       var isLegal = function(move, from, to) {
@@ -123,12 +124,6 @@
           }
           flipTurn();
           socket.emit('turn', {move: move, from: from, to: to});
-          if (otherFingers[0] === otherFingers[1] === 0) {
-            alert('You win!!!');
-            socket.disconnect();
-          }
-        } else {
-          // Sleep
         }
       }
 
@@ -150,8 +145,12 @@
         }
       });
 
-      socket.on('endGame', function() {
-        // Game is over
+      socket.on('endGame', function(isWin) {
+        if (isWin) {
+          alert("You won!!!");
+        } else {
+          alert("The other user disconnected");
+        }
         document.getElementById('turnIndicator').innerHTML = "Game over";
         socket.disconnect();
       });

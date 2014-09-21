@@ -32,9 +32,9 @@ io.on('connection', function(socket){
       for (i = 0; i < pairedClients.length; ++i) {
         if (pairedClients[i][0] === socket || pairedClients[i][1] === socket) {
           if (pairedClients[i][0] === socket) {
-            pairedClients[i][1].emit('endGame', '');
+            pairedClients[i][1].emit('endGame', false);
           } else {
-            pairedClients[i][0].emit('endGame', '');
+            pairedClients[i][0].emit('endGame', false);
           }
           pairedClients = pairedClients.splice(i, 1);
           break;
@@ -43,12 +43,6 @@ io.on('connection', function(socket){
       console.log('a user has disconnected, game is over');
     });
 
-    // Turn is either an attack or split.
-    // data = {
-    //  move: "",
-    //  from: "",
-    //  to: ""
-    // }
     socket.on('turn', function(data) {
       // Swap left and right to simplify score keeping on the clients
       data.from = data.from === 'left' ? 'right' : 'left';
@@ -64,6 +58,11 @@ io.on('connection', function(socket){
           break;
         }
       }
+    });
+
+    socket.on('endGame', function(isWin) {
+      console.log("game ended");
+      socket.broadcast.emit('endGame', isWin);
     });
 });
 
