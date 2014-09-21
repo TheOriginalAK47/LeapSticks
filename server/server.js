@@ -51,9 +51,8 @@ io.on('connection', function(socket){
     // }
     socket.on('turn', function(data) {
       // Swap left and right to simplify score keeping on the clients
-      var temp = data.from;
-      data.from = data.to;
-      data.to = temp;
+      data.from = data.from === 'left' ? 'right' : 'left';
+      data.to = data.to === 'left' ? 'right' : 'left';
       // Find that socket's pair and update it
       for (i = 0; i < pairedClients.length; ++i) {
         if (pairedClients[i][0] === socket || pairedClients[i][1] === socket) {
