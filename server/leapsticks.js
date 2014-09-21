@@ -1,14 +1,11 @@
-var math = require("mathjs");
-var leap = require("leapjs");
-var sleep = require("sleep");
 var closeTime = 0;
 var closeEnough = 150;
 var fastEnough = 200;
 var leftHandFingers = 1;
 var rightHandFingers = 1;
 function main() {
-    var controller = new leap.Controller(({enableGestures:true}));
-    leap.loop(function(frame) {
+    var controller = new Leap.Controller(({enableGestures:true}));
+    Leap.loop(function(frame) {
         var json = turnHandler(frame); 
         frame = controller.frame();
         if (frame.timestamp < closeTime + 3000000)
@@ -70,7 +67,7 @@ function handAttackedData(frame) {
         hand2Vel = hand2.palmVelocity;
         //console.log(hand1Vel[2]);
         //console.log(hand2Vel[2]);
-        if (math.abs(hand1Vel[2]) > fastEnough) {
+        if (Math.abs(hand1Vel[2]) > fastEnough) {
             closeTime = frame.timeStamp;
             turnJSON.data["move"] =  "attack";
             turnJSON.data["from"] = hand1.type;
@@ -79,7 +76,7 @@ function handAttackedData(frame) {
                 turnJSON.data["to"] = "right";
             else
                 turnJSON.data["to"] = "left";
-        } else if (math.abs(hand2Vel[2]) > fastEnough) {
+        } else if (Math.abs(hand2Vel[2]) > fastEnough) {
             closeTime = frame.timeStamp;
             turnJSON.data["move"] = "attack";
             turnJSON.data["from"] = hand2.type;
@@ -121,7 +118,7 @@ function handsTouchingData(frame) {
             var handTwoType = hand2.type;
             handOneVelocity = hand1.palmVelocity[0];
             handTwoVelocity = hand2.palmVelocity[0];
-            if (math.abs(handOneVelocity) > fastEnough) {
+            if (Math.abs(handOneVelocity) > fastEnough) {
                 turnJSON.data["move"] = "split";
                 //console.log(handOneVelocity);
                 if (hand1.type == "right") {
@@ -135,7 +132,7 @@ function handsTouchingData(frame) {
                     turnJSON.data["to"] = "right";
                     rightHandFingers += 1;
                 }
-            } else if (math.abs(handTwoVelocity) > fastEnough) {
+            } else if (Math.abs(handTwoVelocity) > fastEnough) {
                 //console.log(handTwoVelocity);
                 turnJSON.data["move"] = "split";
                 if (hand2.type == "right") {
@@ -156,5 +153,5 @@ function handsTouchingData(frame) {
 }
 
 function calcDistance(vectorOne, vectorTwo) {
-    return math.sqrt(math.pow(vectorOne[0] - vectorTwo[0], 2) + math.pow(vectorOne[1] - vectorTwo[1], 2) + math.pow(vectorOne[2] - vectorTwo[2], 2));     
+    return Math.sqrt(Math.pow(vectorOne[0] - vectorTwo[0], 2) + Math.pow(vectorOne[1] - vectorTwo[1], 2) + Math.pow(vectorOne[2] - vectorTwo[2], 2));     
 }
