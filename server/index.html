@@ -47,8 +47,8 @@
           document.getElementById('leftScore').innerHTML = myFingers[0];
           document.getElementById('rightScore').innerHTML = myFingers[1];
           if (myFingers[0] === 0 && myFingers[1] === 0) {
-            alert('You lose!!!!');
             socket.emit('endGame', true);
+            alert('You lose!!!!');
             socket.disconnect();
           }
         } else if (data.move === 'split') {
