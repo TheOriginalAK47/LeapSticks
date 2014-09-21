@@ -1,6 +1,7 @@
 var closeTime = 0;
 var closeEnough = 150;
-var fastEnough = 200;
+var fastEnough = 600;
+//var zThreshold = 400;
 var leftHandFingers = 1;
 var rightHandFingers = 1;
 function main(controller) {
@@ -59,13 +60,14 @@ function handAttackedData(frame) {
                                 }
                     };
     if (frame.hands.length > 1) {
-        //console.log("ZZZZZ...");
         var hand1 = frame.hands[0];
         var hand2 = frame.hands[1];
         hand1Vel = hand1.palmVelocity;
         hand2Vel = hand2.palmVelocity;
-        //console.log(hand1Vel[2]);
-        //console.log(hand2Vel[2]);
+        //console.log("Velocity: " + hand1Vel);
+        //console.log("Velocity: " + hand2Vel);
+        //console.log("Z: " + hand1.palmPosition[2]);
+        //console.log("Z: " + hand2.palmPosition[2]);
         if (Math.abs(hand1Vel[2]) > fastEnough) {
             closeTime = frame.timeStamp;
             turnJSON.data["move"] =  "attack";
@@ -73,7 +75,7 @@ function handAttackedData(frame) {
             var xVel = hand1.palmVelocity[0];
             if (xVel > 350) 
                 turnJSON.data["to"] = "right";
-            else
+            else if (xVel < -350)
                 turnJSON.data["to"] = "left";
         } else if (Math.abs(hand2Vel[2]) > fastEnough) {
             closeTime = frame.timeStamp;
@@ -82,7 +84,7 @@ function handAttackedData(frame) {
             var xVel = hand2.palmVelocity[0];
             if (xVel > 350) 
                 turnJSON.data["to"] = "right";
-            else
+            else if (xVel < -350)
                 turnJSON.data["to"] = "left";
         }
     }
