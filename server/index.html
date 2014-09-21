@@ -9,15 +9,15 @@
     <script src="leapsticks.js"></script>
   </head>
   <body style="background-color:black;">
-    <div style="color: white; width: 100%;">
-      <div style="float: left; width: 33%;">
-        <span>Enemy left: </span><span id='eleftScore'>1</span>&nbsp;
-        <span>Enemy right: </span><span id='erightScore'>1</span>&nbsp;
+    <div style="font-size: 27px; font-family: sans-serif">
+      <div style="position: absolute; top: 5%; width: 90%; padding-left: 3%; color: #C90000;">
+        <span id='eleftScore' style="float: left;">1</span>&nbsp;
+        <span id='erightScore' style="float: right;">1</span>&nbsp;
       </div>
-      <div id="turnIndicator" style="text-align: center; display: inline-block; width: 33%;">Waiting for Match to start</div>
-      <div style="text-align: right; float: right; width: 33%;">
-        <span>My left: </span><span id='leftScore'>1</span>&nbsp;
-        <span>My right: </span><span id='rightScore'>1</span>&nbsp;
+      <div id="turnIndicator" style="text-align: center; display: inline-block; width: 100%; color: white;">Waiting for Match to Start</div>
+      <div style="position: absolute; bottom: 5%; width: 90%; padding-left: 3%; color: green;">
+        <span id='leftScore' style="float: left;">1</span>&nbsp;
+        <span id='rightScore' style="float: right">1</span>&nbsp;
       </div>
     </div>
     <script>
