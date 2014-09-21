@@ -8,6 +8,9 @@ app.get('/', function(req, res){
     res.sendfile('index.html');
 });
 
+app.get('/leapsticks.js', function(req, res){
+    res.sendfile('leapsticks.js');
+});
 io.on('connection', function(socket){
     clients.push(socket);
     console.log('a user has connected');

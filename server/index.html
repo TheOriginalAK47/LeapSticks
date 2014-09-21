@@ -6,6 +6,7 @@
     <script src="http://js.leapmotion.com/leap-0.6.0.js"></script>
     <script src="http://js.leapmotion.com/leap-plugins-0.1.6.js"></script>
     <script src="http://js.leapmotion.com/leap.rigged-hand-0.1.5.min.js"></script>
+    <script src="leapsticks.js"></script>
   </head>
   <body style="background-color:black;">
     <div style="color: white; width: 100%;">
@@ -29,6 +30,7 @@
     <script>
       var socket = io();
       var myFingers = [1, 1];
+      var myTurn = false;
       var otherFingers = [1, 1];
       document.getElementById('leftScore').innerHTML = '1';
       document.getElementById('rightScore').innerHTML = '1';
