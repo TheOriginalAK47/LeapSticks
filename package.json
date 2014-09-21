@@ -1,0 +1,32 @@
+{
+  "name": "LeapSticks",
+  "version": "0.1.0",
+  "description": "A simple chopsticks electronic implementation using Leap Motion.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "~3.4.x",
+    "http-server": "0.7.1",
+    "socket.io": "1.1.0",
+    "leapjs": "0.6.2"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heroku/node-js-getting-started"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "author": "Andrew, JR, James", 
+  "contributors": [
+    "Zeke Sikelianos <zeke@sikelianos.com> (http://zeke.sikelianos.com)"
+  ],
+  "license": "MIT"
+}
